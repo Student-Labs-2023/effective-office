@@ -18,7 +18,7 @@ private val darkColors = darkColors(
     background = md_theme_dark_background,
     surface = md_theme_dark_surface,
     onError = md_theme_dark_onError,
-    onPrimary = md_theme_light_elevationBackground
+    onPrimary = md_theme_dark_onPrimary
 )
 
 val CustomDarkColors = CustomColorsPalette(
@@ -91,8 +91,8 @@ fun AppTheme(
         CustomDarkColors
     }
 
-    //val colors = darkColors
-    //val customColorsPalette = CustomDarkColors
+   // val colors = darkColors
+  //  val customColorsPalette = CustomDarkColors
 
     val typography = Typography(
         h1 = header1,

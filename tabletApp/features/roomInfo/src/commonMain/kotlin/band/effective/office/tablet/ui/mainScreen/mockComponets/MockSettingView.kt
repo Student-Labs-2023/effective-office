@@ -1,6 +1,5 @@
 package band.effective.office.tablet.ui.mainScreen.mockComponets
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +26,7 @@ fun MockSettingView(component: MockSettingsComponent) {
     val state by component.state.collectAsState()
     Surface(
         modifier = Modifier.fillMaxWidth().height(100.dp),
-        color = MaterialTheme.colors.surface,
+        color = if (state.isVisible) MaterialTheme.colors.surface else Color.Transparent,
         onClick = { component.sendEvent(MockSettingsEvent.OnSwitchVisible) }) {
         if (state.isVisible) {
             Column {
@@ -52,6 +51,13 @@ fun MockSettingView(component: MockSettingsComponent) {
                         checked = state.isHaveTv,
                         onCheckedChange = { component.sendEvent(MockSettingsEvent.OnSwitchTv(it)) },
                         text = "Есть tv"
+                    )
+                }
+                Row {
+                    Item(
+                        checked = state.isSuccess,
+                        onCheckedChange = { component.sendEvent(MockSettingsEvent.OnSwitchSuccess(it)) },
+                        text = "success"
                     )
                 }
             }
