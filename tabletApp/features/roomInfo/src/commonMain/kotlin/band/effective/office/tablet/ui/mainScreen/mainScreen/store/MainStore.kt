@@ -5,6 +5,7 @@ import com.arkivanov.mvikotlin.core.store.Store
 interface MainStore : Store<MainStore.Intent, MainStore.State, Nothing> {
     sealed interface Intent {
         object OnOpenFreeRoomModal : Intent
+        object OnOpenEditBookingModal : Intent
         object CloseModal : Intent
         object OnBookingCurrentRoomRequest : Intent
         object OnBookingOtherRoomRequest : Intent
@@ -18,9 +19,10 @@ interface MainStore : Store<MainStore.Intent, MainStore.State, Nothing> {
         val isError: Boolean,
         val showBookingModal: Boolean,
         val showFreeModal: Boolean,
+        val showEditBookingModal: Boolean,
         val isDisconnect: Boolean
     ) {
-        fun showModal() = showFreeModal || showBookingModal
+        fun showModal() = showFreeModal || showBookingModal || showEditBookingModal
 
         companion object {
             val defaultState =
@@ -30,7 +32,8 @@ interface MainStore : Store<MainStore.Intent, MainStore.State, Nothing> {
                     isError = false,
                     showBookingModal = false,
                     showFreeModal = false,
-                    isDisconnect = false
+                    isDisconnect = false,
+                    showEditBookingModal = false
                 )
         }
     }
