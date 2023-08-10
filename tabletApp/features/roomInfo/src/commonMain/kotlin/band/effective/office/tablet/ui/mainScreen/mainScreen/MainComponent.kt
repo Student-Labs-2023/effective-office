@@ -3,8 +3,6 @@ package band.effective.office.tablet.ui.mainScreen.mainScreen
 import band.effective.office.tablet.ui.freeSelectRoom.FreeSelectRoomComponent
 import band.effective.office.tablet.ui.mainScreen.bookingRoomComponents.BookingRoomComponent
 import band.effective.office.tablet.ui.mainScreen.bookingRoomComponents.store.BookingStore
-import band.effective.office.tablet.ui.mainScreen.editBooking.EditBookingComponentImpl
-import band.effective.office.tablet.ui.mainScreen.editBooking.store.EditBookingStore
 import band.effective.office.tablet.ui.mainScreen.mainScreen.store.MainFactory
 import band.effective.office.tablet.ui.mainScreen.mainScreen.store.MainStore
 import band.effective.office.tablet.ui.mainScreen.mockComponets.MockSettingsComponent
@@ -54,20 +52,12 @@ class MainComponent(
             onMainScreen = {
                 mainStore.accept(MainStore.Intent.CloseModal)
                 bookingRoomComponent.sendIntent(BookingStore.Intent.OnChangeIsActive(true))
-            },
+                           },
             onCloseRequest = {
                 mainStore.accept(MainStore.Intent.CloseModal)
                 bookingRoomComponent.sendIntent(BookingStore.Intent.OnChangeIsActive(false))
             }
         )
-
-    val editBookingComponent: EditBookingComponentImpl = EditBookingComponentImpl(
-        componentContext = childContext(key = "editBooking"),
-        storeFactory = storeFactory,
-        onMainScreen = {},
-        onCloseRequest = {},
-        state = EditBookingStore.State
-    )
 
     val freeSelectRoomComponent: FreeSelectRoomComponent =
         FreeSelectRoomComponent(

@@ -18,8 +18,6 @@ import band.effective.office.tablet.ui.freeSelectRoom.FreeSelectRoomComponent
 import band.effective.office.tablet.ui.freeSelectRoom.FreeSelectRoomView
 import band.effective.office.tablet.ui.mainScreen.bookingRoomComponents.BookingRoomComponent
 import band.effective.office.tablet.ui.mainScreen.bookingRoomComponents.BookingRoomView
-import band.effective.office.tablet.ui.mainScreen.editBooking.EditBookingComponentImpl
-import band.effective.office.tablet.ui.mainScreen.editBooking.EditBookingScreen
 import band.effective.office.tablet.ui.mainScreen.mainScreen.uiComponents.Disconnect
 import band.effective.office.tablet.ui.mainScreen.mockComponets.MockSettingView
 import band.effective.office.tablet.ui.mainScreen.mockComponets.MockSettingsComponent
@@ -32,11 +30,9 @@ import band.effective.office.tablet.ui.selectRoomScreen.SelectRoomScreen
 fun MainScreenView(
     showBookingModal: Boolean,
     showFreeRoomModal: Boolean,
-    showEditBookingModal: Boolean,
     mockComponent: MockSettingsComponent,
     bookingRoomComponent: BookingRoomComponent,
     selectRoomComponent: SelectRoomComponent,
-    editBookingComponent: EditBookingComponentImpl,
     freeSelectRoomComponent: FreeSelectRoomComponent,
     roomInfoComponent: RoomInfoComponent,
     showModal: Boolean,
@@ -60,7 +56,7 @@ fun MainScreenView(
                         .padding(25.dp),
                     bookingRoomComponent = bookingRoomComponent
                 )
-                Box {
+                Box() {
                     MockSettingView(mockComponent)
                     Disconnect(visible = isDisconnect)
                 }
@@ -73,7 +69,6 @@ fun MainScreenView(
             when {
                 showBookingModal -> SelectRoomScreen(component = selectRoomComponent)
                 showFreeRoomModal -> FreeSelectRoomView(freeSelectRoomComponent = freeSelectRoomComponent)
-                showEditBookingModal -> EditBookingScreen(component = editBookingComponent)
             }
         }
     }

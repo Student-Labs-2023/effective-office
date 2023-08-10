@@ -32,9 +32,7 @@ fun MainScreen(component: MainComponent) {
                 roomInfoComponent = component.roomInfoComponent,
                 freeSelectRoomComponent = component.freeSelectRoomComponent,
                 showModal = state.showModal(),
-                isDisconnect = state.isDisconnect,
-                showEditBookingModal = state.showEditBookingModal,
-                editBookingComponent = component.editBookingComponent
+                isDisconnect = state.isDisconnect
             )
         }
     }

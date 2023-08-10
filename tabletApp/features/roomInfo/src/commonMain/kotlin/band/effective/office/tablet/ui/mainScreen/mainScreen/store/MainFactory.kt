@@ -40,7 +40,6 @@ class MainFactory(private val storeFactory: StoreFactory) : KoinComponent {
         object BookingOtherRoom : Message
         object CloseModal : Message
         object OpenFreeModal : Message
-        object OpenEditBookingModal : Message
 
         data class Load(val isSuccess: Boolean) : Message
         data class UpdateDisconnect(val newValue: Boolean) : Message
@@ -61,7 +60,6 @@ class MainFactory(private val storeFactory: StoreFactory) : KoinComponent {
                 is MainStore.Intent.OnOpenFreeRoomModal -> dispatch(Message.OpenFreeModal)
                 is MainStore.Intent.OnDisconnectChange -> dispatch(Message.UpdateDisconnect(intent.newValue))
                 is MainStore.Intent.RebootRequest -> reboot()
-                is MainStore.Intent.OnOpenEditBookingModal -> dispatch(Message.OpenEditBookingModal)
             }
         }
 
@@ -92,7 +90,6 @@ class MainFactory(private val storeFactory: StoreFactory) : KoinComponent {
                 is Message.OpenFreeModal -> copy(showFreeModal = true)
                 is Message.UpdateDisconnect -> copy(isDisconnect = message.newValue)
                 is Message.Reboot -> copy(isError = false, isLoad = true)
-                is Message.OpenEditBookingModal -> copy(showEditBookingModal = true)
             }
     }
 }
