@@ -15,20 +15,19 @@ The main goal of our project is to create a simple and convenient application fo
 
 |                        Main                         |
 |:---------------------------------------------------:|
-| <img height="150" src="..\assets\main-screen.png"/> |
+| <img height="500" src="..\assets\main-screen.png"/> |
 
 ### Meeting selection screen
 
 |                        Meeting selection                         |
 |:----------------------------------------------------------------:|
-| <img height="150" src="..\assets\meeting-selection-screen.png"/> |
+| <img height="500" src="..\assets\meeting-selection-screen.png"/> |
 
 ### Data Change Screen
 
 |                        Data Change                         |
 |:----------------------------------------------------------:|
-| <img height="150" src="..\assets\data-change-screen.png"/> |
-
+| <img height="500" src="..\assets\data-change-screen.png"/> |
 
 # Features :fire:
 
@@ -63,6 +62,7 @@ A list of technologies used within the project:
 
 - [Margarita Ginjolia](https://github.com/MargaritaDj)
 - [Maksim Mishenko](https://github.com/UserNameMax)
+- [Victor Konyshev](https://github.com/DireRaven-exe)
 - [Angelika Semenova](https://github.com/UserNameMax)
 
 ## Guidelines for starting up: :computer:
