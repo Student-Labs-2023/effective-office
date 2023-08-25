@@ -1,7 +1,7 @@
 package band.effective.office.tablet.network.repository.impl
 
 import band.effective.office.network.api.Api
-import band.effective.office.network.dto.BookingInfo
+import band.effective.office.network.dto.BookingDTO
 import band.effective.office.network.dto.WorkspaceDTO
 import band.effective.office.network.model.Either
 import band.effective.office.network.model.ErrorResponse
@@ -12,6 +12,7 @@ import band.effective.office.tablet.domain.model.RoomInfo
 import band.effective.office.tablet.network.repository.OrganizerRepository
 import band.effective.office.tablet.network.repository.RoomRepository
 import band.effective.office.tablet.utils.map
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +32,12 @@ class RoomRepositoryImpl(
 
     private suspend fun loadRoomInfo(roomId: String): Either<ErrorWithData<RoomInfo>, RoomInfo> =
         with(roomInfo.value) {
-            val events = loadEvents(roomId)
+            val response = api.getWorkspace(roomId)
+            val id = when (response) {
+                is Either.Error -> ""
+                is Either.Success -> response.data.id
+            }
+            val events = loadEvents(id)
             roomInfo.update { api.getWorkspace(roomId).convert(this).addEvents(events) }
             roomInfo.value
         }
@@ -57,7 +63,7 @@ class RoomRepositoryImpl(
                         val loadEvents = loadEvents(id)
                         if (loadEvents is Either.Success) {
                             events.add(loadEvents.data.map { it.toEventInfo() })
-                        }
+                        } else events.add(listOf())
                     }
                     Either.Success(roomList.mapIndexed { index, room ->
                         room.toRoomInfo().addEvents(events[index])
@@ -67,19 +73,20 @@ class RoomRepositoryImpl(
         }
 
     override fun subscribeOnUpdates(
-        roomId: String
+        roomId: String,
+        scope: CoroutineScope
     ): Flow<Either<ErrorWithData<RoomInfo>, RoomInfo>> =
         channelFlow {
             send(loadRoomInfo(roomId))
             launch {
-                api.subscribeOnWorkspaceUpdates(roomId).collect {
+                api.subscribeOnWorkspaceUpdates(roomId, scope).collect {
                     send(
                         it.convert(roomInfo.value).addEvents(loadEvents(roomId))
                             .apply { roomInfo.update { this } })
                 }
             }
             launch {
-                api.subscribeOnBookingsList(roomId).collect {
+                api.subscribeOnBookingsList(roomId, scope).collect {
                     send(
                         getRoomInfo(roomId).addEvents(it)
                             .apply { roomInfo.update { this } })
@@ -99,12 +106,12 @@ class RoomRepositoryImpl(
             successMapper = { it.toRoomInfo() }
         )
 
-    private suspend fun BookingInfo.toEventInfo() = let {
+    private suspend fun BookingDTO.toEventInfo() = let {
         EventInfo(
-            startTime = GregorianCalendar().apply { time = Date(it.begin) },
-            finishTime = GregorianCalendar().apply { time = Date(it.end) },
-            organizer = getOrgById(it.ownerId),
-            id = it.id
+            startTime = GregorianCalendar().apply { time = Date(it.beginBooking) },
+            finishTime = GregorianCalendar().apply { time = Date(it.endBooking) },
+            organizer = getOrgById(it.owner.id),
+            id = it.id!!
         )
     }
 
@@ -127,7 +134,7 @@ class RoomRepositoryImpl(
         id = id
     )
 
-    private suspend fun Either<ErrorWithData<RoomInfo>, RoomInfo>.addEvents(loadEvents: Either<ErrorResponse, List<BookingInfo>>): Either<ErrorWithData<RoomInfo>, RoomInfo> =
+    private suspend fun Either<ErrorWithData<RoomInfo>, RoomInfo>.addEvents(loadEvents: Either<ErrorResponse, List<BookingDTO>>): Either<ErrorWithData<RoomInfo>, RoomInfo> =
         if (loadEvents is Either.Success) {
             when (this) {
                 is Either.Error -> this

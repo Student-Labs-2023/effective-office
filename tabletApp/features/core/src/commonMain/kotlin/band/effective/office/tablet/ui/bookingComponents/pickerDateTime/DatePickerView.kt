@@ -2,6 +2,7 @@ package band.effective.office.tablet.ui.bookingComponents.pickerDateTime
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
@@ -23,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import band.effective.office.tablet.features.core.MainRes
 import band.effective.office.tablet.ui.theme.LocalCustomColorsPalette
 import band.effective.office.tablet.ui.theme.header4
 import band.effective.office.tablet.ui.theme.header6
@@ -36,6 +39,7 @@ import epicarchitect.calendar.compose.datepicker.EpicDatePicker
 import epicarchitect.calendar.compose.datepicker.state.EpicDatePickerState
 import epicarchitect.calendar.compose.datepicker.state.LocalEpicDatePickerState
 import epicarchitect.calendar.compose.pager.state.EpicCalendarPagerState
+import io.github.skeptick.libres.compose.painterResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -70,7 +74,7 @@ fun DatePickerView(epicDatePickerState: EpicDatePickerState) {
                 state = epicDatePickerState,
                 dayOfWeekContent = CustomDayOfWeekContent,
                 dayOfMonthContent = CustomDayOfMonthContent,
-                modifier = Modifier.background(Color.Transparent),
+                modifier = Modifier.background(Color.Transparent).height(180.dp),
             )
         }
     }
@@ -98,10 +102,10 @@ private fun DatePickerTitleView(
             )
 
         ) {
-            Text(
-                text = " < ",
-                style = header4,
-                color = LocalCustomColorsPalette.current.tertiaryTextAndIcon
+            Image(
+                modifier = Modifier,
+                painter = painterResource(MainRes.image.arrow_left),
+                contentDescription = null
             )
         }
         Text(
@@ -122,10 +126,10 @@ private fun DatePickerTitleView(
             )
 
         ) {
-            Text(
-                text = " > ",
-                color = LocalCustomColorsPalette.current.tertiaryTextAndIcon,
-                style = header4,
+            Image(
+                modifier = Modifier,
+                painter = painterResource(MainRes.image.arrow_right),
+                contentDescription = null
             )
         }
     }

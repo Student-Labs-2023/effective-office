@@ -1,14 +1,16 @@
 package office.effective.common.utils
 
-import office.effective.config
 import org.koin.dsl.module
 import org.ktorm.database.Database
 
 val commonDiModule = module(createdAtStart = true) {
-    val url: String = config.propertyOrNull("database.url")
-        ?.getString() ?: "jdbc:postgresql://localhost:15432/effectiveOfficeBackendDB"
-    val username: String = config.propertyOrNull("database.username")?.getString() ?: "postgres"
-    val password: String = System.getenv("DATABASE_PASSWORD")
+    val host: String? = System.getenv("DATABASE_HOST")
+    val port: String? = System.getenv("DATABASE_PORT")
+    val databaseName: String? = System.getenv("DATABASE_NAME")
+
+    val url: String = String.format("jdbc:postgresql://%s:%s/%s", host, port, databaseName)
+    val username: String? = System.getenv("DATABASE_USERNAME")
+    val password: String? = System.getenv("DATABASE_PASSWORD")
 
     single<Database> {
         Database.connect(

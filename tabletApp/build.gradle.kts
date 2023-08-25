@@ -4,6 +4,7 @@ plugins {
     id(Plugins.Kotlin.plugin)
     id(Plugins.Parcelize.plugin)
     id(Plugins.Libres.plugin)
+    id(Plugins.GoogleServices.plugin)
 }
 
 android {
@@ -12,8 +13,8 @@ android {
 
     defaultConfig {
         applicationId = "band.effective.office.tablet"
-        versionCode = 1
-        versionName = "0.0.1"
+        versionCode = 2
+        versionName = "0.1.0"
 
         minSdk = 26
         targetSdk = 33
@@ -69,6 +70,7 @@ kotlin {
                 implementation(Dependencies.AndroidX.appCompat)
                 implementation(Dependencies.AndroidX.activityCompose)
                 implementation(Dependencies.Compose.uiTooling)
+                implementation("com.google.firebase:firebase-messaging-ktx:23.1.0")
             }
         }
     }

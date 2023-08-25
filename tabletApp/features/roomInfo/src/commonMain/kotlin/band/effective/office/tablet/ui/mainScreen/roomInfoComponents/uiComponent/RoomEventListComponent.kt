@@ -1,15 +1,18 @@
 package band.effective.office.tablet.ui.mainScreen.roomInfoComponents.uiComponent
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +44,7 @@ fun RoomEventListComponent(
             style = MaterialTheme.typography.h7,
             color = LocalCustomColorsPalette.current.secondaryTextAndIcon
         )
+        Spacer(modifier = Modifier.height(30.dp))
         Row {
             val lazyListState: LazyListState = rememberLazyListState()
             LazyColumn(
@@ -48,8 +52,12 @@ fun RoomEventListComponent(
                 state = lazyListState
             ) {
                 items(eventsList) { event ->
-                    Spacer(modifier = Modifier.height(30.dp))
-                    Row(Modifier.clickable { onItemClick(event) }) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .background(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(10.dp))
+                            .padding(10.dp)
+                            .clickable { onItemClick(event) }) {
                         Text(
                             text = "${event.startTime.time()} - ${event.finishTime.time()}",
                             style = MaterialTheme.typography.h7,
@@ -61,6 +69,7 @@ fun RoomEventListComponent(
                             color = LocalCustomColorsPalette.current.secondaryTextAndIcon
                         )
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
         }
@@ -87,7 +96,7 @@ fun Modifier.simpleVerticalScrollbar(
         val scrollbarHeight = state.layoutInfo.visibleItemsInfo.size * elementHeight
         val cornerRadius = CornerRadius(x = 36.dp.toPx(), y = 36.dp.toPx())
 
-        if (scrollbarHeight != size.height) {
+        if (scrollbarHeight < size.height) {
             drawRoundRect(
                 color = ScrollBarColor.background,
                 topLeft = Offset(this.size.width - width.toPx(), 0f),

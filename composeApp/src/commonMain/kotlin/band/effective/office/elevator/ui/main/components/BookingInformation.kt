@@ -8,28 +8,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import band.effective.office.elevator.ui.models.ReservedSeat
+import kotlinx.datetime.LocalDate
 
 @Composable
 fun BookingInformation(
     reservedSeats: List<ReservedSeat>,
+    currentDate: LocalDate,
+    dateFiltrationOnReserves: Boolean,
     onClickBook: () -> Unit,
-    onClickShowMap: () -> Unit,
-    onClickShowOptions: () -> Unit,
+    onClickOptionMenu: (String) -> Unit,
     onClickOpenCalendar: () -> Unit,
-    onClickOpenBottomDialog: () -> Unit
+    onClickOpenBottomDialog: () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
         Spacer(modifier = Modifier.height(24.dp))
-        DateSelection(onClickOpenCalendar = onClickOpenCalendar, onClickOpenBottomDialog = onClickOpenBottomDialog)
+        DateSelection(
+            onClickOpenCalendar = onClickOpenCalendar,
+            onClickOpenBottomDialog = onClickOpenBottomDialog,
+            currentDate = currentDate,
+            dateFiltration = dateFiltrationOnReserves
+        )
         Spacer(modifier = Modifier.height(24.dp))
         SeatsReservation(
             reservedSeats = reservedSeats,
             onClickBook = onClickBook,
-            onClickShowMap = onClickShowMap,
-            onClickShowOptions = onClickShowOptions
+            onClickOptionMenu = onClickOptionMenu
+
         )
     }
 }

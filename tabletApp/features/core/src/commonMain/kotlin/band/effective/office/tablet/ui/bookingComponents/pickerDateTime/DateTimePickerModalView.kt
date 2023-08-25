@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
@@ -15,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import band.effective.office.tablet.features.core.MainRes
 import band.effective.office.tablet.ui.common.CrossButtonView
 import band.effective.office.tablet.ui.theme.LocalCustomColorsPalette
 import band.effective.office.tablet.ui.theme.header8
@@ -32,7 +34,10 @@ import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DateTimePickerModalView(dateTimePickerComponent: DateTimePickerComponent, currentDate: Calendar) {
+fun DateTimePickerModalView(
+    dateTimePickerComponent: DateTimePickerComponent,
+    currentDate: Calendar
+) {
     val stateDateTime by dateTimePickerComponent.state.collectAsState()
     val selectedDateTime by remember { mutableStateOf(stateDateTime.selectDate) }
 
@@ -44,7 +49,7 @@ fun DateTimePickerModalView(dateTimePickerComponent: DateTimePickerComponent, cu
                     dayOfMonthViewHeight = 32.dp
                 )
             ),
-            selectionContainerColor = LocalCustomColorsPalette.current.pressedPrimaryButton,
+            selectionContainerColor = MaterialTheme.colors.secondary,
         ),
         selectedDates =
         listOf(
@@ -57,7 +62,8 @@ fun DateTimePickerModalView(dateTimePickerComponent: DateTimePickerComponent, cu
         selectionMode = EpicDatePickerState.SelectionMode.Single(1),
         initialMonth = EpicMonth(
             year = currentDate[Calendar.YEAR],
-            month = Month(currentDate[Calendar.MONTH] + 1))
+            month = Month(currentDate[Calendar.MONTH] + 1)
+        )
     )
 
 
@@ -67,7 +73,16 @@ fun DateTimePickerModalView(dateTimePickerComponent: DateTimePickerComponent, cu
         selectedDateTime = selectedDateTime,
         onCloseRequest = { dateTimePickerComponent.sendIntent(DateTimePickerStore.Intent.CloseModal()) },
         onSetDate = { day: Int, month: Int, year: Int, hour: Int, minute: Int ->
-            dateTimePickerComponent.sendIntent(DateTimePickerStore.Intent.OnSetDate(day, month, year, hour, minute)) }
+            dateTimePickerComponent.sendIntent(
+                DateTimePickerStore.Intent.OnSetDate(
+                    day,
+                    month,
+                    year,
+                    hour,
+                    minute
+                )
+            )
+        }
     )
 }
 
@@ -112,36 +127,40 @@ fun DateTimePickerModalView(
                 /*TODO LOGIC MUST BE IN COMPONENT OR STORE */
                 selectedDateTime.set(
                     /* year = */  if (epicDatePickerState.selectedDates.isNotEmpty()) epicDatePickerState.selectedDates.first().year else selectedDateTime[Calendar.YEAR],
-                    /* month = */ if (epicDatePickerState.selectedDates.isNotEmpty()) epicDatePickerState.selectedDates.first().monthNumber - 1  else selectedDateTime[Calendar.MONTH],
-                    /* date = */  if (epicDatePickerState.selectedDates.isNotEmpty()) epicDatePickerState.selectedDates.first().dayOfMonth else selectedDateTime[Calendar.DATE],
-                    /* hourOfDay = */  selectedDateTime[Calendar.HOUR_OF_DAY],
-                    /* minute = */selectedDateTime[Calendar.MINUTE]
+                    /* month = */
+                    if (epicDatePickerState.selectedDates.isNotEmpty()) epicDatePickerState.selectedDates.first().monthNumber - 1 else selectedDateTime[Calendar.MONTH],
+                    /* date = */
+                    if (epicDatePickerState.selectedDates.isNotEmpty()) epicDatePickerState.selectedDates.first().dayOfMonth else selectedDateTime[Calendar.DATE],
+                    /* hourOfDay = */
+                    selectedDateTime[Calendar.HOUR_OF_DAY],
+                    /* minute = */
+                    selectedDateTime[Calendar.MINUTE]
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-
-                Button(
-                    modifier = Modifier
-                        //.fillMaxHeight(1f)
-                        .fillMaxWidth(0.3f),
-                    onClick = {
-                        onSetDate(
-                            selectedDateTime[Calendar.DATE],
-                            selectedDateTime[Calendar.MONTH],
-                            selectedDateTime[Calendar.YEAR],
-                            selectedDateTime[Calendar.HOUR_OF_DAY],
-                            selectedDateTime[Calendar.MINUTE]
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Button(
+                        modifier = Modifier.align(Alignment.Center)
+                            .fillMaxWidth(0.3f),
+                        onClick = {
+                            onSetDate(
+                                selectedDateTime[Calendar.DATE],
+                                selectedDateTime[Calendar.MONTH],
+                                selectedDateTime[Calendar.YEAR],
+                                selectedDateTime[Calendar.HOUR_OF_DAY],
+                                selectedDateTime[Calendar.MINUTE]
+                            )
+                            onCloseRequest()
+                        },
+                        colors = buttonColors(
+                            containerColor = LocalCustomColorsPalette.current.pressedPrimaryButton
                         )
-                        onCloseRequest()
-                    },
-                    colors = buttonColors(
-                        containerColor = LocalCustomColorsPalette.current.pressedPrimaryButton
-                    )
-                ) {
-                    Text(
-                        text = selectedDateTime.date() + " с ${selectedDateTime.time24()}",
-                        style = header8,
-                        color = LocalCustomColorsPalette.current.primaryTextAndIcon,
-                    )
+                    ) {
+                        Text(
+                            text = MainRes.string.apply_date_time_for_booking,
+                            style = header8,
+                            color = LocalCustomColorsPalette.current.primaryTextAndIcon,
+                        )
+                    }
                 }
             }
         }

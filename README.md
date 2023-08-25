@@ -14,6 +14,12 @@ technologies as little as possible.
 
 ## Project Structure: :dizzy:
 
+Pre-requisite: [Notion](https://www.notion.so/effectiveband/613e964862f44c9faefefd7958697dd9?pvs=4). Note: due to the incompleteness of the database, placeholders may appear in applications
+
+[Effective-Tablet](tabletApp/README.md)
+
+An application for booking meeting rooms on a tablet.
+
 [Effective-TV](tv-app/effecticeTV/README.md)
 
 Application for Android TV, which will show various interesting statistics about
@@ -61,3 +67,6 @@ should be moved to the body of the message.
 * [Egor Parkomenko](https://github.com/1MPULSEONE) (Effective-TV)
 * [Stanislav Radchenko](https://github.com/Radch-enko) (Office-Elevator, Effective-TV)
 * [Maksim Mishenko](https://github.com/UserNameMax) (Effective-TV)
+
+* ## PS
+* [Main repository](https://github.com/effectivemade/labs-office-elevator) where we continiue work and bug fix

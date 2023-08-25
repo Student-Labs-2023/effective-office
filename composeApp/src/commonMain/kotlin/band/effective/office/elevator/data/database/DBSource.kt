@@ -1,8 +1,10 @@
 package band.effective.office.elevator.data.database
 
-import band.effective.office.elevator.ui.content.ContentComponent
+import band.effective.office.elevator.domain.models.User
 
-// TODO(edit this interface)
 interface DBSource {
-    fun getProfileName(): String
+    suspend fun getCurrentUserInfo(): User?
+
+    suspend fun update(user: User, idToken: String)
+    suspend fun update(user: User)
 }

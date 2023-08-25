@@ -4,7 +4,7 @@ import office.effective.common.exception.InstanceNotFoundException
 import office.effective.common.utils.DatabaseTransactionManager
 import office.effective.common.utils.UuidValidator
 import office.effective.features.booking.converters.BookingFacadeConverter
-import office.effective.features.booking.dto.BookingDTO
+import office.effective.dto.BookingDTO
 import office.effective.features.booking.service.BookingService
 import office.effective.model.Booking
 import office.effective.model.Workspace
@@ -22,9 +22,7 @@ class BookingFacade(private val bookingService: BookingService,
      */
     fun deleteById(id: String) {
         transactionManager.useTransaction({
-            bookingService.deleteById(
-                uuidValidator.uuidFromString(id)
-            )
+            bookingService.deleteById(id)
         })
     }
 
@@ -36,10 +34,9 @@ class BookingFacade(private val bookingService: BookingService,
      * @author Daniil Zavyalov
      */
     fun findById(id: String): BookingDTO {
-        val uuid = uuidValidator.uuidFromString(id)
         val dto: BookingDTO = transactionManager.useTransaction({
-            val model = bookingService.findById(uuid)
-                ?: throw InstanceNotFoundException(Workspace::class, "Booking with id $id not found", uuid)
+            val model = bookingService.findById(id)
+                ?: throw InstanceNotFoundException(Workspace::class, "Booking with id $id not found")
             bookingConverter.modelToDto(model)
         })
         return dto

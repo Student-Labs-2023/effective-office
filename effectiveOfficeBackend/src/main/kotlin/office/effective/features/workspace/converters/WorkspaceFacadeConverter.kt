@@ -1,12 +1,13 @@
 package office.effective.features.workspace.converters
 
 import office.effective.common.utils.UuidValidator
-import office.effective.features.workspace.dto.UtilityDTO
-import office.effective.features.workspace.dto.WorkspaceDTO
-import office.effective.features.workspace.dto.WorkspaceZoneDTO
+import office.effective.dto.UtilityDTO
+import office.effective.dto.WorkspaceDTO
+import office.effective.dto.WorkspaceZoneDTO
 import office.effective.model.Utility
 import office.effective.model.Workspace
 import office.effective.model.WorkspaceZone
+import java.util.*
 
 class WorkspaceFacadeConverter(private val uuidValidator: UuidValidator) {
 
@@ -18,10 +19,7 @@ class WorkspaceFacadeConverter(private val uuidValidator: UuidValidator) {
     fun modelToDto(model: Workspace): WorkspaceDTO {
         val utilities = model.utilities.map { utilityModelToDto(it) }
         return WorkspaceDTO(
-            model.id.toString(),
-            model.name,
-            utilities,
-            model.zone?.let { zoneModelToDto(it) }
+            model.id.toString(), model.name, utilities, model.zone?.let { zoneModelToDto(it) }, model.tag
         )
     }
 
@@ -49,14 +47,17 @@ class WorkspaceFacadeConverter(private val uuidValidator: UuidValidator) {
      * @author Daniil Zavyalov
      */
     fun dtoToModel(dto: WorkspaceDTO): Workspace {
+        var workspaceId: UUID? = null
+        if (dto.id != "null") {
+            workspaceId = uuidValidator.uuidFromString(dto.id)
+        }
+
         val utilities = dto.utilities.map { utilityDtoToModel(it) }
-        return Workspace(
-            id = uuidValidator.uuidFromString(dto.id),
+        return Workspace(id = workspaceId,
             name = dto.name,
-            tag = "", //This is probably wrong
+            tag = dto.tag,
             utilities = utilities,
-            zone = dto.zone?.let { zoneDtoToModel(it) }
-        )
+            zone = dto.zone?.let { zoneDtoToModel(it) })
     }
 
     /**

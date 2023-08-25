@@ -26,6 +26,7 @@ import band.effective.office.tablet.features.selectRoom.MainRes
 import band.effective.office.tablet.ui.bookingComponents.DateTimeView
 import band.effective.office.tablet.ui.bookingComponents.EventDurationView
 import band.effective.office.tablet.ui.bookingComponents.EventOrganizerView
+import band.effective.office.tablet.ui.bookingComponents.pickerDateTime.DateTimePickerModalView
 import band.effective.office.tablet.ui.buttons.alert.AlertButton
 import band.effective.office.tablet.ui.buttons.success.SuccessButton
 import band.effective.office.tablet.ui.common.CrossButtonView
@@ -33,7 +34,7 @@ import band.effective.office.tablet.ui.loader.Loader
 import band.effective.office.tablet.ui.updateEvent.store.UpdateEventStore
 import java.util.Calendar
 
-@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun UpdateEventView(
     component: UpdateEventComponent,
@@ -51,30 +52,40 @@ fun UpdateEventView(
         }
     }
 
-    UpdateEventView(
-        onDismissRequest = onCloseRequest,
-        incrementData = { component.sendIntent(UpdateEventStore.Intent.OnUpdateDate(1)) },
-        decrementData = { component.sendIntent(UpdateEventStore.Intent.OnUpdateDate(-1)) },
-        onOpenDateTimePickerModal = {},
-        incrementDuration = { component.sendIntent(UpdateEventStore.Intent.OnUpdateLength(30)) },
-        decrementDuration = { component.sendIntent(UpdateEventStore.Intent.OnUpdateLength(-15)) },
-        onExpandedChange = { component.sendIntent(UpdateEventStore.Intent.OnExpandedChange) },
-        onSelectOrganizer = { component.sendIntent(UpdateEventStore.Intent.OnSelectOrganizer(it)) },
-        selectData = state.date,
-        selectDuration = state.duration,
-        selectOrganizer = state.selectOrganizer,
-        organizers = state.selectOrganizers,
-        expended = state.expanded,
-        onUpdateEvent = { component.sendIntent(UpdateEventStore.Intent.OnUpdateEvent) },
-        onDeleteEvent = { component.sendIntent(UpdateEventStore.Intent.OnDeleteEvent) },
-        inputText = state.inputText,
-        onInput = { component.sendIntent(UpdateEventStore.Intent.OnInput(it)) },
-        onDoneInput = { component.sendIntent(UpdateEventStore.Intent.OnDoneInput) },
-        isUpdateError = state.isErrorUpdate,
-        isUpdateLoad = state.isLoadUpdate,
-        isDeleteError = state.isErrorDelete,
-        isDeleteLoad = state.isLoadDelete
-    )
+    if (state.showSelectDate) {
+        DateTimePickerModalView(
+            dateTimePickerComponent = component.dateTimePickerComponent,
+            currentDate = state.date
+        )
+    } else {
+        UpdateEventView(
+            onDismissRequest = onCloseRequest,
+            incrementData = { component.sendIntent(UpdateEventStore.Intent.OnUpdateDate(1)) },
+            decrementData = { component.sendIntent(UpdateEventStore.Intent.OnUpdateDate(-1)) },
+            onOpenDateTimePickerModal = { component.sendIntent(UpdateEventStore.Intent.OnOpenSelectDateDialog) },
+            incrementDuration = { component.sendIntent(UpdateEventStore.Intent.OnUpdateLength(30)) },
+            decrementDuration = { component.sendIntent(UpdateEventStore.Intent.OnUpdateLength(-15)) },
+            onExpandedChange = { component.sendIntent(UpdateEventStore.Intent.OnExpandedChange) },
+            onSelectOrganizer = { component.sendIntent(UpdateEventStore.Intent.OnSelectOrganizer(it)) },
+            selectData = state.date,
+            selectDuration = state.duration,
+            selectOrganizer = state.selectOrganizer,
+            organizers = state.selectOrganizers,
+            expended = state.expanded,
+            onUpdateEvent = { component.sendIntent(UpdateEventStore.Intent.OnUpdateEvent) },
+            onDeleteEvent = { component.sendIntent(UpdateEventStore.Intent.OnDeleteEvent) },
+            inputText = state.inputText,
+            onInput = { component.sendIntent(UpdateEventStore.Intent.OnInput(it)) },
+            onDoneInput = { component.sendIntent(UpdateEventStore.Intent.OnDoneInput) },
+            isUpdateError = state.isErrorUpdate,
+            isUpdateLoad = state.isLoadUpdate,
+            isDeleteError = state.isErrorDelete,
+            isDeleteLoad = state.isLoadDelete,
+            enableUpdateButton = state.enableUpdateButton
+        )
+    }
+
+
 }
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -101,7 +112,8 @@ fun UpdateEventView(
     isUpdateError: Boolean,
     isUpdateLoad: Boolean,
     isDeleteError: Boolean,
-    isDeleteLoad: Boolean
+    isDeleteLoad: Boolean,
+    enableUpdateButton: Boolean
 ) {
     Dialog(
         onDismissRequest = onDismissRequest
@@ -152,7 +164,8 @@ fun UpdateEventView(
             Spacer(modifier = Modifier.height(25.dp))
             SuccessButton(
                 modifier = Modifier.fillMaxWidth().height(60.dp),
-                onClick = onUpdateEvent
+                onClick = onUpdateEvent,
+                enable = enableUpdateButton
             ) {
                 when {
                     isUpdateLoad -> Loader()
@@ -163,7 +176,7 @@ fun UpdateEventView(
 
                     else -> {
                         Text(
-                            text = MainRes.string.try_again,
+                            text = MainRes.string.update_button,
                             style = MaterialTheme.typography.h6
                         )
                     }

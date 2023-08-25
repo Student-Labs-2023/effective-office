@@ -106,7 +106,7 @@ class BookingStoreFactory(private val storeFactory: StoreFactory) : KoinComponen
         data class NotCorrectEvent(val busyEvent: EventInfo) : Message
 
         data class ChangeOrganizer(val newOrganizer: Organizer) : Message
-        data class ChangeNameRoom(val nameRoom: String): Message
+        data class ChangeNameRoom(val nameRoom: String) : Message
         object OrganizerError : Message
         object BookingOtherRoom : Message
         object BookingCurrentRoom : Message
@@ -159,6 +159,7 @@ class BookingStoreFactory(private val storeFactory: StoreFactory) : KoinComponen
                 is BookingStore.Intent.OnChangeIsActive -> {
                     if (intent.reset) {
                         dispatch(Message.Reset)
+                        publish(BookingStore.Label.ChangeDate)
                     }
                     dispatch(Message.OnChangeIsActive)
                     reset(getState)
@@ -167,10 +168,12 @@ class BookingStoreFactory(private val storeFactory: StoreFactory) : KoinComponen
                 is BookingStore.Intent.OnSetDate -> setNewDate(
                     getState,
                     intent.changedDay,
-                    intent.changedMonth
+                    intent.changedMonth,
+                    intent.changedYear,
+                    intent.changedHour,
+                    intent.changedMinute
                 )
 
-                is BookingStore.Intent.OnSetDate -> setNewDate(getState, intent.changedDay, intent.changedMonth, intent.changedYear, intent.changedHour, intent.changedMinute)
                 is BookingStore.Intent.CloseModal -> intent.close?.invoke()
                 is BookingStore.Intent.OnChangeIsCurrentSelectTime -> changeIsSelectCurrentTime(
                     getState
@@ -198,6 +201,7 @@ class BookingStoreFactory(private val storeFactory: StoreFactory) : KoinComponen
                 delay(60000)
                 if (getState().isActive) {
                     dispatch(Message.Reset)
+                    publish(BookingStore.Label.ChangeDate)
                 }
             }
         }
@@ -255,15 +259,22 @@ class BookingStoreFactory(private val storeFactory: StoreFactory) : KoinComponen
                     changeDay
                 )
             }
-            dispatch(
-                Message.ChangeEvent(
-                    selectDate = newDate,
-                    length = state.length,
-                    isSelectCurrentTime = newDate.isNow()
+            if (newDate > GregorianCalendar().apply {
+                    add(
+                        Calendar.MINUTE,
+                        -(get(Calendar.HOUR) * 60 + get(Calendar.MINUTE))
+                    )
+                }) {
+                dispatch(
+                    Message.ChangeEvent(
+                        selectDate = newDate,
+                        length = state.length,
+                        isSelectCurrentTime = newDate.isNow()
+                    )
                 )
-            )
-            publish(BookingStore.Label.ChangeDate)
-            reset(getState)
+                publish(BookingStore.Label.ChangeDate)
+                reset(getState)
+            }
         }
 
         fun setNewDate(getState: () -> BookingStore.State, changeDay: Int, changeMonth: Int) =
@@ -285,7 +296,15 @@ class BookingStoreFactory(private val storeFactory: StoreFactory) : KoinComponen
                 )
                 reset(getState)
             }
-        fun setNewDate(getState: () -> BookingStore.State, changeDay: Int, changeMonth: Int, changeYear: Int, changeHour: Int, changeMinute: Int) = scope.launch() {
+
+        fun setNewDate(
+            getState: () -> BookingStore.State,
+            changeDay: Int,
+            changeMonth: Int,
+            changeYear: Int,
+            changeHour: Int,
+            changeMinute: Int
+        ) = scope.launch() {
             val state = getState()
             val newDate = (state.selectDate.clone() as Calendar).apply {
                 set(
@@ -296,14 +315,16 @@ class BookingStoreFactory(private val storeFactory: StoreFactory) : KoinComponen
                     /* minute = */ changeMinute
                 )
             }
-            dispatch(
-                Message.ChangeEvent(
-                    selectDate = newDate,
-                    length = state.length,
-                    isSelectCurrentTime = newDate.isNow()
+            if (newDate > GregorianCalendar()) {
+                dispatch(
+                    Message.ChangeEvent(
+                        selectDate = newDate,
+                        length = state.length,
+                        isSelectCurrentTime = newDate.isNow()
+                    )
                 )
-            )
-            reset(getState)
+                reset(getState)
+            }
         }
 
         fun changeLength(getState: () -> BookingStore.State, change: Int) = scope.launch() {
@@ -383,6 +404,7 @@ class BookingStoreFactory(private val storeFactory: StoreFactory) : KoinComponen
                     inputText = msg.newValue,
                     selectOrganizers = msg.newList
                 )
+
                 is Message.ChangeNameRoom -> copy(roomName = msg.nameRoom)
             }
 
@@ -391,7 +413,8 @@ class BookingStoreFactory(private val storeFactory: StoreFactory) : KoinComponen
             selectDate = GregorianCalendar(),
             length = BookingStore.State.default.length,
             isSelectCurrentTime = BookingStore.State.default.isSelectCurrentTime,
-            isOrganizerError = BookingStore.State.default.isOrganizerError
+            isOrganizerError = BookingStore.State.default.isOrganizerError,
+            inputText = BookingStore.State.default.inputText
         )
 
     }
