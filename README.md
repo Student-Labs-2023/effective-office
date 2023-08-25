@@ -67,3 +67,6 @@ should be moved to the body of the message.
 * [Egor Parkomenko](https://github.com/1MPULSEONE) (Effective-TV)
 * [Stanislav Radchenko](https://github.com/Radch-enko) (Office-Elevator, Effective-TV)
 * [Maksim Mishenko](https://github.com/UserNameMax) (Effective-TV)
+
+* ## PS
+* [Main repository](https://github.com/effectivemade/labs-office-elevator) where we continiue work and bug fix
